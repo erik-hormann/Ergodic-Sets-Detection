@@ -154,16 +154,21 @@ def FindIO_lenght(G):
     return N, len(Nsources),len(Nwells)
 
 def import_graph(filename):
+
     if filename.endswith('.xml'):
         G = igraph.Graph.Read_GraphML(filename)
         return G
+
+    elif filename.endswith('.gml'):
+        G = nx.DiGraph()
+        G = nx.read_gml(filename)
+        #G = nx.convert_node_labels_to_integers(G, first_label=0, ordering='default', label_attribute=None)
     
     elif filename.endswith('.csv'):
         file = open(filename, "r")
-        Graphtype = nx.Graph()
+        Graphtype = nx.DiGraph()
 
-        G = nx.parse_edgelist(file, comments='t', delimiter=',', create_using=nx.DiGraph,
-                      data=(('weight', float),))
+        G = nx.parse_edgelist(file, comments='t', delimiter=',', create_using=nx.DiGraph,)
         G = nx.convert_node_labels_to_integers(G, first_label=0, ordering='default', label_attribute=None)
         return G
     
@@ -185,12 +190,10 @@ def import_graph(filename):
         G = nx.read_adjlist(filename, create_using=nx.DiGraph())
         G = nx.convert_node_labels_to_integers(G, first_label=0, ordering='default', label_attribute=None)
         return G
-    
+
     else:
         print("error: filename " + filename + " has invalid extension")
-        
-    print("Warning: the graph type has not been recognized")
-    G = nx.DiGraph()
+
     return G
 
 
