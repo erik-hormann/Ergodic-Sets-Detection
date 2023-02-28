@@ -28,6 +28,7 @@ graph_colors = {
 #%% Reading networka
 
 N = []
+E = []
 Nwells = []
 Nsources = []
 source_colors = []
@@ -44,21 +45,42 @@ for file in fileslist:
     wells_colors.append('dark'+color)
     G = myg.import_graph(filepath)
     [n, ns, nw] = myg.FindIO_lenght(G)
+    e = G.number_of_edges()
     N.append(n)
+    E.append(e)
     Nsources.append(ns)
     Nwells.append(nw)
  
 #%% Plotting   
  
-fig = plt.figure()
-plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
-plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
-plt.legend()
-plt.xlabel("Total number of vertices")
-plt.ylabel("Number of vertices in ergodic sets")
-plt.show()
+# fig = plt.figure()
+# plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
+# plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
+# plt.legend()
+# plt.xlabel("Total number of vertices")
+# plt.ylabel("Number of vertices in ergodic sets")
+# plt.show()
+#
+# fig = plt.figure()
+# plt.yscale('log')
+# plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
+# plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
+# plt.legend()
+# plt.xlabel("Total number of vertices")
+# plt.ylabel("Number of vertices in ergodic sets")
+# plt.show()
+#
+# fig = plt.figure()
+# plt.xscale('log')
+# plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
+# plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
+# plt.legend()
+# plt.xlabel("Total number of vertices")
+# plt.ylabel("Number of vertices in ergodic sets")
+# plt.show()
 
 fig = plt.figure()
+plt.xscale('log')
 plt.yscale('log')
 plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
 plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
@@ -69,19 +91,10 @@ plt.show()
 
 fig = plt.figure()
 plt.xscale('log')
-plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
-plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
-plt.legend()
-plt.xlabel("Total number of vertices")
-plt.ylabel("Number of vertices in ergodic sets")
-plt.show()
-
-fig = plt.figure()
-plt.xscale('log')
 plt.yscale('log')
-plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
-plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
+plt.scatter(E, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
+plt.scatter(E, Nsources, marker = 'x', label = "Inputs", c = source_colors)
 plt.legend()
-plt.xlabel("Total number of vertices")
+plt.xlabel("Total number of edges")
 plt.ylabel("Number of vertices in ergodic sets")
 plt.show()
