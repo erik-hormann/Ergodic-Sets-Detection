@@ -31,7 +31,7 @@ print("igraph running... version: " + igraph.__version__)
 N = 100
 p0 = 1/N
 
-samples = 1000  # number of graphs at each parameters
+samples = 10  # number of graphs at each parameters
 probabilities = p0 * np.arange(0.01, 10, .4)
 
 p_bar = tqdm(total = samples*len(probabilities), position=0, leave=True)

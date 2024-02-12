@@ -28,12 +28,12 @@ import pickle
 # checking for igraph to be installed correctly
 print("igraph running... version: " + igraph.__version__)
 
-N = 2000
+N = 100
 p0 = 1/N
 
 # number of graphs at each parameters
 if N <= 200:
-    samples = 4000
+    samples = 10
 elif N <= 600:
     samples = 2000
 else:
