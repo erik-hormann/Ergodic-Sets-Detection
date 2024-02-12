@@ -9,7 +9,7 @@ This program calculates the correlation between four inputs and four outputs
 as a function of p/p_c, where p is the parameter of the ER(N,p) core of the graph, 
 to which the four synthetic inputs and outputs are attached.
 """
-import igraph
+import networkx as nx
 import mygraph as myg
 import numpy as np
 import matplotlib.pyplot as plt
@@ -38,20 +38,22 @@ for k in range(len(P)):
     for j in range(samples):
         p = P[k]
         G = myg.GenerateER_IO(100, p)
-        N = G.vcount()
-        d = G.diameter()
+        N = G.number_of_nodes()
+        try:
+            d = nx.diameter(G)
+        except:
+            d=N*100
         # finding the strongly connected components
         [sources, wells, gcc] = myg.FindIO(G)
         
-        A = G.get_adjacency()
-        A = np.array(A.data)
-        A = A + 1e-6*np.eye(G.vcount())
-        A = A/A.sum(axis=1)[:,None]  # creating a stochastic matrix
+        A = nx.adjacency_matrix(G)
+        A = A + 1e-6 * np.eye(G.number_of_nodes())
+        A = A/A.sum(axis=1)[:, None]  # creating a stochastic matrix
         A = np.linalg.matrix_power(A,100*d)
         
         for i in range(len(std_sources)):
             # initialising x0 as the 1 vector over a source (nput)
-            x = np.zeros([G.vcount()])
+            x = np.zeros([G.number_of_nodes()])
             x[std_sources[i]] = 1
             # iterating the dynamics
             x = np.matmul(x,A)
@@ -89,7 +91,7 @@ pickle.dump(correlations, open('../data/correlations.dat','wb'))
 correlations = pickle.load(open('../data/correlations.dat','rb'))
 correlations = correlations.transpose()
 
-plt.semilogx(P,np.sum(correlations,axis=0)/6)
+plt.semilogx(P, np.sum(correlations, axis=0)/6)
 
 #CORRECT, BUT CHECK THE LEGNTH OF correlations ALONG THE FIRST AXIS
 #plt.loglog(P,np.sum(correlations,axis=0)/np.shape(correlations)[0])

@@ -38,7 +38,7 @@ graph_colors = {
 sims_exist = False
 sims_path = "../results/"
 
-if os.path.exists(sims_path + "N.dat") and os.path.exists(sims_path + "E.dat") and os.path.exists(sims_path + "Nsources.dat")  and  os.path.exists(sims_path + "wells_colors.dat") and  os.path.exists(sims_path + "source_colors.dat"):
+if os.path.exists(sims_path + "N_nontrivial.dat") and os.path.exists(sims_path + "E_nontrivial.dat") and os.path.exists(sims_path + "Nsources_nontrivial.dat")  and  os.path.exists(sims_path + "wells_colors_nontrivial.dat") and  os.path.exists(sims_path + "source_colors_nontrivial.dat"):
     sims_exist = True
 
 #%% Reading network
@@ -63,32 +63,35 @@ if not sims_exist:
         source_colors.append(color)
         wells_colors.append('dark'+color)
         G = myg.import_graph(filepath)
-        [ns, nw, n, un] = myg.FindIO_lenght(G)
-        if ns+nw+n+un != G.number_of_nodes():
-            warnings.warn("Not all nodes accounted for in file" + str(file) + "\nNodes = " + str(G.number_of_nodes()) + "\n ES + GCC = " + str(n+ns+nw))
+        [ns, nw, n, un] = myg.FindIO(G)
+        #if ns+nw+n+un != G.number_of_nodes():
+        #    warnings.warn("Not all nodes accounted for in file" + str(file) + "\nNodes = " + str(G.number_of_nodes()) + "\n ES + GCC = " + str(n+ns+nw))
         nn = G.number_of_nodes()
         e = G.number_of_edges()
+        #eliminating trivial ergodic sets
+        ns = [x for x in ns if len(x) > 1]
+        nw = [x for x in nw if len(x) > 1]
         N.append(nn)
         E.append(e)
-        Nsources.append(ns)
-        Nwells.append(nw)
+        Nsources.append(len(myg.flatten(ns)))
+        Nwells.append(len(myg.flatten(nw)))
 
 if sims_exist:
-    N = pickle.load(open("../results/N.dat", "rb"))
-    E = pickle.load(open("../results/E.dat", "rb"))
-    Nsources = pickle.load(open("../results/Nsources.dat", "rb"))
-    Nwells = pickle.load(open("../results/Nwells.dat", "rb"))
-    wells_colors = pickle.load(open("../results/wells_colors.dat", "rb"))
-    source_colors = pickle.load(open("../results/source_colors.dat", "rb"))
-    ns = pickle.load(open("../results/ns.dat", "rb"))
+    N = pickle.load(open("../results/N_nontrivial.dat", "rb"))
+    E = pickle.load(open("../results/E_nontrivial.dat", "rb"))
+    Nsources = pickle.load(open("../results/Nsources_nontrivial.dat", "rb"))
+    Nwells = pickle.load(open("../results/Nwells_nontrivial.dat", "rb"))
+    wells_colors = pickle.load(open("../results/wells_colors_nontrivial.dat", "rb"))
+    source_colors = pickle.load(open("../results/source_colors_nontrivial.dat", "rb"))
+    ns = pickle.load(open("../results/ns_nontrivial.dat", "rb"))
 #%% Plotting
 
-line = [0.1*min(N), max(N)*10]
+line = [0.01*min(N), max(N)*10]
 
 fig = plt.figure()
 plt.xscale('log')
 plt.yscale('log')
-plt.ylim((2, 6000))
+plt.ylim((1, 6000))
 plt.xlim((8/10*min(N),max(N)*10/8))
 plt.scatter(N, Nwells, marker = 'o', label = "Outputs", c = wells_colors)
 plt.scatter(N, Nsources, marker = 'x', label = "Inputs", c = source_colors)
@@ -103,10 +106,10 @@ plt.show()
 
 #%% Saving
 
-pickle.dump(N, open("../results/N.dat", "wb"))
-pickle.dump(E, open("../results/E.dat", "wb"))
-pickle.dump(Nsources, open("../results/Nsources.dat", "wb"))
-pickle.dump(Nwells, open("../results/Nwells.dat", "wb"))
-pickle.dump(wells_colors, open("../results/wells_colors.dat", "wb"))
-pickle.dump(source_colors, open("../results/source_colors.dat", "wb"))
-pickle.dump(ns, open("../results/ns.dat", "wb"))
+pickle.dump(N, open("../results/N_nontrivial.dat", "wb"))
+pickle.dump(E, open("../results/E_nontrivial.dat", "wb"))
+pickle.dump(Nsources, open("../results/Nsources_nontrivial.dat", "wb"))
+pickle.dump(Nwells, open("../results/Nwells_nontrivial.dat", "wb"))
+pickle.dump(wells_colors, open("../results/wells_colors_nontrivial.dat", "wb"))
+pickle.dump(source_colors, open("../results/source_colors_nontrivial.dat", "wb"))
+pickle.dump(ns, open("../results/ns_nontrivial.dat", "wb"))

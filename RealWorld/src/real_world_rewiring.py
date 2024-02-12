@@ -4,11 +4,6 @@
 Created on Tue Aug 10 14:46:40 2021
 
 @author: erikhormann
-
-This code takes all the files in the folder "real_world_graphs"
-and performs the calculations of the ergodic sets. It plots the
-logarithmic plot of the wells and sources in each of the
-networks, including the trivial one-node ergodic sets.
 """
 
 import mygraph as myg
@@ -38,7 +33,7 @@ graph_colors = {
 sims_exist = False
 sims_path = "../results/"
 
-if os.path.exists(sims_path + "N.dat") and os.path.exists(sims_path + "E.dat") and os.path.exists(sims_path + "Nsources.dat")  and  os.path.exists(sims_path + "wells_colors.dat") and  os.path.exists(sims_path + "source_colors.dat"):
+if os.path.exists(sims_path + "rew_N.dat") and os.path.exists(sims_path + "rew_E.dat") and os.path.exists(sims_path + "rew_Nsources.dat")  and  os.path.exists(sims_path + "rew_wells_colors.dat") and  os.path.exists(sims_path + "rew_source_colors.dat"):
     sims_exist = True
 
 #%% Reading network
@@ -63,24 +58,27 @@ if not sims_exist:
         source_colors.append(color)
         wells_colors.append('dark'+color)
         G = myg.import_graph(filepath)
-        [ns, nw, n, un] = myg.FindIO_lenght(G)
-        if ns+nw+n+un != G.number_of_nodes():
-            warnings.warn("Not all nodes accounted for in file" + str(file) + "\nNodes = " + str(G.number_of_nodes()) + "\n ES + GCC = " + str(n+ns+nw))
-        nn = G.number_of_nodes()
-        e = G.number_of_edges()
+        in_degree = [d for n, d in G.in_degree()]
+        out_degree = [d for n, d in G.out_degree()]
+        H = nx.directed_configuration_model([i for i in in_degree], [j for j in out_degree])
+        [ns, nw, n, un] = myg.FindIO_lenght(H)
+        if ns+nw+n+un != H.number_of_nodes():
+            warnings.warn("Not all nodes accounted for in file" + str(file) + "\nNodes = " + str(H.number_of_nodes()) + "\n ES + GCC = " + str(n+ns+nw))
+        nn = H.number_of_nodes()
+        e = H.number_of_edges()
         N.append(nn)
         E.append(e)
         Nsources.append(ns)
         Nwells.append(nw)
 
 if sims_exist:
-    N = pickle.load(open("../results/N.dat", "rb"))
-    E = pickle.load(open("../results/E.dat", "rb"))
-    Nsources = pickle.load(open("../results/Nsources.dat", "rb"))
-    Nwells = pickle.load(open("../results/Nwells.dat", "rb"))
-    wells_colors = pickle.load(open("../results/wells_colors.dat", "rb"))
-    source_colors = pickle.load(open("../results/source_colors.dat", "rb"))
-    ns = pickle.load(open("../results/ns.dat", "rb"))
+    N = pickle.load(open("../results/rew_N.dat", "rb"))
+    E = pickle.load(open("../results/rew_E.dat", "rb"))
+    Nsources = pickle.load(open("../results/rew_Nsources.dat", "rb"))
+    Nwells = pickle.load(open("../results/rew_Nwells.dat", "rb"))
+    wells_colors = pickle.load(open("../results/rew_wells_colors.dat", "rb"))
+    source_colors = pickle.load(open("../results/rew_source_colors.dat", "rb"))
+    ns = pickle.load(open("../results/rew_ns.dat", "rb"))
 #%% Plotting
 
 line = [0.1*min(N), max(N)*10]
@@ -96,17 +94,17 @@ plt.plot(line, line, 'k--')
 plt.title("Input/outputs in original networks")
 plt.xlabel("Total number of vertices")
 plt.ylabel("Number of vertices in ergodic sets")
-plt.savefig('../figures/realWorldLogLog.png', format='png', dpi=300)
-plt.savefig('../figures/realWorldLogLog.svg', format='svg')
-plt.savefig('../figures/realWorldLogLog.eps', format='eps')
+plt.savefig('../figures/rew_realWorldLogLog.png', format='png', dpi=300)
+plt.savefig('../figures/rew_realWorldLogLog.svg', format='svg')
+plt.savefig('../figures/rew_realWorldLogLog.eps', format='eps')
 plt.show()
 
 #%% Saving
 
-pickle.dump(N, open("../results/N.dat", "wb"))
-pickle.dump(E, open("../results/E.dat", "wb"))
-pickle.dump(Nsources, open("../results/Nsources.dat", "wb"))
-pickle.dump(Nwells, open("../results/Nwells.dat", "wb"))
-pickle.dump(wells_colors, open("../results/wells_colors.dat", "wb"))
-pickle.dump(source_colors, open("../results/source_colors.dat", "wb"))
-pickle.dump(ns, open("../results/ns.dat", "wb"))
+pickle.dump(N, open("../results/rew_N.dat", "wb"))
+pickle.dump(E, open("../results/rew_E.dat", "wb"))
+pickle.dump(Nsources, open("../results/rew_Nsources.dat", "wb"))
+pickle.dump(Nwells, open("../results/rew_Nwells.dat", "wb"))
+pickle.dump(wells_colors, open("../results/rew_wells_colors.dat", "wb"))
+pickle.dump(source_colors, open("../results/rew_source_colors.dat", "wb"))
+pickle.dump(ns, open("../results/rew_ns.dat", "wb"))
