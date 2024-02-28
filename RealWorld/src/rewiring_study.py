@@ -9,7 +9,7 @@ This code takes all the files in the folder "real_world_graphs"
 and performs 100 rewiring of the graphs. It plots the size of
 the largest ergodic set (wells) in the original graph
 and the size of the largest erdgodic sett (wells) in
-each of the rewiring.
+each of the Rewiring.
 """
 
 import mygraph as myg
